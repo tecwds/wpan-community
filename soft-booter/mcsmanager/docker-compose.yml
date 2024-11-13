@@ -1,0 +1,27 @@
+# docker-compose.yml
+services:
+  web:
+    image: githubyumao/mcsmanager-web:latest
+    ports:
+      - "23333:23333"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - mcs-web-data:/opt/mcsmanager/web/data
+      - mcs-web-logs:/opt/mcsmanager/web/logs
+  daemon:
+    image: githubyumao/mcsmanager-daemon:latest
+    restart: unless-stopped
+    ports:
+      - "24444:24444"
+    environment:
+      - MCSM_DOCKER_WORKSPACE_PATH=<CHANGE_ME_TO_INSTALL_PATH>/daemon/data/InstanceData
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      # 需要修改
+      - /opt/mcsmanager/daemon/data:/opt/mcsmanager/daemon/data
+      # 需要修改
+      - /opt/mcsmanager/daemon/logs:/opt/mcsmanager/daemon/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+volumes:
+  mcs-web-data:
+  mcs-web-logs:
