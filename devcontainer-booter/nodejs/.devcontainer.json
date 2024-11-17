@@ -1,0 +1,65 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+    "name": "Deno by wpan - Debian",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/base:bullseye",
+    "features": {
+        // 具体配置查看 https://github.com/devcontainers/features/blob/main/src/node/devcontainer-feature.json
+        "ghcr.io/devcontainers/features/node:1": {
+            // 默认长支持版本
+            "version": "lts",
+            // compile native
+            "nodeGypDependencies": true,
+            "nvmInstallPath": "/usr/local/share/nvm",
+            // 不安装 pnpm
+            "pnpmVersion": "none",
+            "nvmVersion": "latest",
+            // 通过 apt 安装 yarn
+            "installYarnUsingApt": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // lihuiwang.vue-alias-skip 设置
+                "alias-skip.mappings": {
+                    "~@/": "/src",
+                    "views": "/src/views",
+                    "assets": "/src/assets",
+                    "network": "/src/network",
+                    "common": "/src/common"
+                }
+            },
+            "extensions": [
+                // 别名路径跳转
+                "lihuiwang.vue-alias-skip",
+                // 路径别名智能提示 [和 vue-alias-skip 不冲突]
+                "IWANABETHATGUY.path-alias",
+                // 彩虹缩进
+                "oderwat.indent-rainbow",
+                // 实时变化
+                "ritwickdey.LiveServer",
+                // 自动转换模板字符串
+                "meganrogge.template-string-converter",
+                // 实时预览颜色
+                "jaspernorth.vscode-pigments",
+                // 代码规范检查
+                "dbaeumer.vscode-eslint",
+                // 代码美化
+                "esbenp.prettier-vscode",
+                // 路径预览图片
+                "kisstkondoros.vscode-gutter-preview",
+                // 在浏览器里打开
+                "techer.open-in-browser",
+
+                // 自动导入组建
+                "zhubincong.vue-component",
+                // vue
+                "octref.vetur",
+                // vue3
+                "hollowtree.vue-snippets"
+            ]
+        }
+    }
+}
