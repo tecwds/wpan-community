@@ -58,7 +58,10 @@
                 // vue
                 "octref.vetur",
                 // vue3
-                "hollowtree.vue-snippets"
+                "hollowtree.vue-snippets",
+
+                // 路径提示
+                "christian-kohler.path-intellisense"
             ]
         }
     }
