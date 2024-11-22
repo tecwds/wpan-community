@@ -1,0 +1,73 @@
+# 新版 docker-compose 不需要指定版本
+# version: '3.9'
+
+# Elasticsearch 和 kibana 统一使用 8.15.3 版本
+
+services:
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: 'elastic-search'
+    restart: unless-stopped
+    environment:
+      - ELASTIC_PASSWORD=elastic
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      # - bootstrap.mlockall=true
+      - bootstrap.memory_lock true
+      # - http.enabled = true
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.license.self_generated.type=basic
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - elasticsearch-plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - "9200:9200"
+    networks:
+      - elastic
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 | grep -q 'You Know, for Search'" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 120
+      start_period: 30s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    container_name: 'kibana'
+    restart: unless-stopped
+    depends_on:
+      - elastic-search
+      # elastic-search:
+        # condition: service_healthy
+    environment:
+      - SERVERNAME = kibana
+      - ELASTICSEARCH_HOSTS=http://elastic-search:9200
+      - ELASTICSEARCH_USERNAME=kibana
+      - ELASTICSEARCH_PASSWORD=kibana
+      - I18N_LOCALE=zh-CN
+    volumes:
+      - kibana:/usr/share/kibana/data
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 120
+      start_period: 30s
+
+networks:
+  elastic:
+  
+volumes:
+  kibana:
+  elasticsearch-data:
+  elasticsearch-plugins:
