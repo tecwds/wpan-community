@@ -3,7 +3,7 @@
 
 services:
   halo-server:
-    image: imageName
+    image: 'halohub/halo:2.20'
     container_name: 'halo-server'
     restart: unless-stopped
     command: 
