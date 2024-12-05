@@ -1,0 +1,3 @@
+[submodule "wpan-station/components/halo/halo-source"]
+	path = wpan-station/components/halo/halo-source
+	url = https://github.com/halo-dev/halo.git
