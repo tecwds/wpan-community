@@ -36,7 +36,6 @@ services:
     container_name: 'halo-mysql'
     restart: unless-stopped
     command: 
-      - --default-authentication-plugin=caching_sha2_password
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
       - --explicit_defaults_for_timestamp=true
