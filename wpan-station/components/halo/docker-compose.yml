@@ -3,9 +3,7 @@
 
 services:
   halo-server:
-    build: 
-      context: ./halo-source
-      dockerfile: Dockerfile
+    image: imageName
     container_name: 'halo-server'
     restart: unless-stopped
     command: 
