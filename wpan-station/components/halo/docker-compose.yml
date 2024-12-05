@@ -1,0 +1,77 @@
+# 新版本不需要指定 version
+# version: '3.9'
+
+services:
+  halo-server:
+    build: 
+      context: ./halo-source
+      dockerfile: Dockerfile
+    container_name: 'halo-server'
+    restart: unless-stopped
+    command: 
+      # 数据库
+      - --spring.r2dbc.url=r2dbc:pool:mysql://halo-mysql:3306/halo
+      - --spring.r2dbc.username=root
+      - --spring.r2dbc.password=halo123@mysql
+      - --spring.sql.init.platform=mysql
+      # 外部访问地址，请根据实际需要修改
+      - --halo.external-url=http://halo.wpaint.top/
+      # 端口号 默认8090
+      - --server.port=8090
+    ports:
+      - "38090:8090"
+    volumes:
+      - halo-d:/root/.halo2
+    environment:
+      - JVM_OPTS=-Xmx256m -Xms256m
+      - TZ=Asia/Shanghai
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '1G'
+    depends_on:
+      halo-mysql:
+        condition: service_healthy
+  
+  halo-mysql:
+    image: mysql:5.7
+    container_name: 'halo-mysql'
+    restart: unless-stopped
+    command: 
+      - --default-authentication-plugin=caching_sha2_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --explicit_defaults_for_timestamp=true
+    volumes:
+      - halo-mysql-d:/var/lib/mysql
+      - halo-mysql-backup-d:/data/mysqlBackup
+    environment:
+      - MYSQL_ROOT_PASSWORD=halo123@mysql
+      - MYSQL_DATABASE=halo
+    networks:
+      - halo-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '1G'
+
+networks:
+  halo-net:
+    name: 'halo-net'
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.100.1.0/24
+          gateway: 10.100.1.1
+
+volumes:
+  halo-d:
+  halo-mysql-d:
+  halo-mysql-backup-d:
