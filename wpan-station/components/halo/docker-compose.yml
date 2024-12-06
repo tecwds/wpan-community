@@ -14,8 +14,10 @@ services:
       - --spring.sql.init.platform=mysql
       # 外部访问地址，请根据实际需要修改
       - --halo.external-url=http://halo.wpaint.top/
-      # 端口号 默认8090
+      # 端口号 默认8090  
       - --server.port=8090
+    networks:
+      halo-net:
     ports:
       - "38090:8090"
     volumes:
@@ -27,6 +29,12 @@ services:
       driver: 'json-file'
       options:
         max-size: '1G'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/actuator/health/readiness"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     depends_on:
       halo-mysql:
         condition: service_healthy
@@ -37,6 +45,7 @@ services:
     restart: unless-stopped
     command: 
       - --default-authentication-plugin=caching_sha2_password
+      # - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
       - --explicit_defaults_for_timestamp=true
@@ -47,7 +56,7 @@ services:
       - MYSQL_ROOT_PASSWORD=halo123@mysql
       - MYSQL_DATABASE=halo
     networks:
-      - halo-net
+      halo-net:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
       interval: 3s
